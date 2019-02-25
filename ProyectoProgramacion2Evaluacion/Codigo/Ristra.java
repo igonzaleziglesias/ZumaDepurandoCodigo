@@ -246,6 +246,7 @@ public class Ristra implements IRistra {
                 System.out.println("1.Bolas a explotar: " + bolasJuntas);
                 if (bolasJuntas >= 3) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
                     explotar(posicion, acumulador, acumulador2);
+                    this.puntuacion=this.puntuacion+puntuacion(bolasJuntas);
                     System.out.println("1.explotando");
 //                this.puntuacion = this.puntuacion + puntuacion(bolasJuntas);
 
@@ -276,6 +277,7 @@ public class Ristra implements IRistra {
 
                     if (bolasJuntas >= 3) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
                         explotar(posicion, acumulador, acumulador2);
+                        this.puntuacion=this.puntuacion+puntuacion(bolasJuntas);
                         System.out.println("2.explotando");
                         try {
                             control = 1;
@@ -309,6 +311,7 @@ public class Ristra implements IRistra {
 
                 if ((bolasJuntas >= 3) && (acumulador - 1 >= 0) && (acumulador2 - 1 != 0)) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
                     explotar(posicion, acumulador, acumulador2);
+                    this.puntuacion=this.puntuacion+puntuacion(bolasJuntas)+puntuacionConcatenacion();
                     System.out.println("3.explotando");
                    
                     Bola bolaComodin = ristraBolas.get(posicion - controlador);
