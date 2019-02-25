@@ -226,7 +226,7 @@ public class Ristra implements IRistra {
 //    }
     public ArrayList<Bola> disparar(Bola bola, int posicionConcatena) throws FueraDeRango, ListaVacia {
         MetodosAuxiliares ayuda = new MetodosAuxiliares();
-        int puntos = 0;
+
         int posicion = 0;
         if (control == 0) {
             posicion = ayuda.pedirPosicion(longitud());
@@ -236,106 +236,90 @@ public class Ristra implements IRistra {
 
         int acumulador = 1, acumulador2 = 1, controlador = 0/*necesario?*/, bolasJuntas = 0, longitud = longitud();
 
-        if (posicion == longitud()) {//comprueba si la posicion a insertar es igual a la longitud de la ristra
-            ristraBolas.add(bola);//dispara al final del array
-            acumulador2 = ayuda.contarBolasPorDelante(posicion, ristraBolas, acumulador2);//cuenta las bolas iguales a la disparada que hay antes despues de disparar(cuenta la bola disparada,inicializada en 1)
-            controlador = acumulador2;
-            bolasJuntas = acumulador2;
-            System.out.println("Bolas a explotar1: " + bolasJuntas);
-            
-            if (control == 0) {//añadir si control = 1
+        if (control == 0) {
+            if (posicion == longitud()) {//dispara al final del array y cuenta las bolas del mismo color que hay a su lado
+                ristraBolas.add(bola);
+
+                acumulador2 = ayuda.contarBolasPorDelante(posicion, ristraBolas, acumulador2);//cuenta el numero de bolas iguales que hay delante de la posicion insertada(cuenta la bola insertada)
+                controlador = acumulador2;
+                bolasJuntas = acumulador2;
+                System.out.println("1.Bolas a explotar: " + bolasJuntas);
                 if (bolasJuntas >= 3) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
                     explotar(posicion, acumulador, acumulador2);
-                    System.out.println("explotando1");
-                    if (control == 0) {
-                        puntos = puntos + puntuacion(bolasJuntas);
-                    }
-                    if (control == 1) {
-                        puntos = puntos + puntuacion(bolasJuntas) + puntuacionConcatenacion();
-                    }
+                    System.out.println("1.explotando");
+//                this.puntuacion = this.puntuacion + puntuacion(bolasJuntas);
 
                     try {
-                        Bola bolaComodin = ristraBolas.get(posicion - controlador);//Extrae la siguiente bola de la ristra despues de la eliminacion
-                        ristraBolas.remove(posicion - controlador);
-                        System.out.println("Eliminando Bola siguiente1");
                         control = 1;
+                        Bola bolaComodin = ristraBolas.get(posicion - controlador);
+                        ristraBolas.remove(posicion - controlador);
+                        System.out.println("1.Eliminando conjunto bolas");
                         disparar(bolaComodin, posicion - controlador);
-                        System.out.println("puntuacion a sumar1: " + puntos + " puntos a sumar: ");
 
                     } catch (Exception ex) {
-                        System.out.println("Siguiente Posicion nula");
+                        System.out.println("1.Siguiente Posicion nula");
                     }
                 }
-            } else if ((bolasJuntas >= 3)&&(acumulador-1>=0)&&(acumulador2-1!=0)) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
-                       explotar(posicion, acumulador, acumulador2);System.out.println("explotando3");
-                    try {
-                        Bola bolaComodin = ristraBolas.get(posicion - controlador);//Extrae la siguiente bola de la ristra despues de la eliminacion
-                        ristraBolas.remove(posicion - controlador);
-                        System.out.println("Eliminando Bola siguiente3");
-                        control = 1;
-                        disparar(bolaComodin, posicion - controlador);
-                        puntos = puntos + puntuacion(bolasJuntas) + puntuacionConcatenacion();
-                        System.out.println("puntuacion a sumar3: " + puntos + " puntos a sumar: ");
+            } else {
 
-                    } catch (Exception ex) {
-                        System.out.println("Siguiente Posicion nula");
-                    }
-            }
-        } else {
-            ristraBolas.add(posicion, bola);
-            if (longitud() > 1) {//comprueba si la ristra tiene elementos
-                acumulador = ayuda.contarBolasDetras(posicion, ristraBolas, acumulador, longitud);//cuenta las bolas iguales a la disparada que hay despues despues de disparar(cuenta la bola disparada, inicializada en 1)
-                acumulador2 = ayuda.contarBolasPorDelante(posicion, ristraBolas, acumulador2);//cuenta las bolas iguales a la disparada que hay antes despues de disparar(cuenta la bola disparada,inicializada en 1)
-                controlador = acumulador2 - 1;
+                ristraBolas.add(posicion, bola);
 
-                bolasJuntas = (acumulador + acumulador2 - 1);
-                System.out.println("Bolas a explotar2: " + bolasJuntas);//restamos 1 para no contar dos veces la posicion de la bola introducida
-                if (control == 0) {
+                if (longitud() > 1) {//comprueba si la ristra tiene elementos
+
+                    acumulador = ayuda.contarBolasDetras(posicion, ristraBolas, acumulador, longitud);//cuenta las bolas que hay despues del disparo iguales a la bola disparada(cuenta la bola disparada)
+                    acumulador2 = ayuda.contarBolasPorDelante(posicion, ristraBolas, acumulador2);//cuenta las bolas que hay antes del disparo iguales a la bola disparada(cuenta la bola disparada)
+                    controlador = acumulador2 - 1;
+//                System.out.println("controlador: "+controlador);
+
+                    bolasJuntas = (acumulador + acumulador2 - 1);
+                    System.out.println("2.Bolas a explotar: " + bolasJuntas);//restamos 1 para no contar dos veces la posicion del elemento introducido
+
                     if (bolasJuntas >= 3) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
                         explotar(posicion, acumulador, acumulador2);
-                        System.out.println("explotando2");
-                        if (control == 0) {
-                            puntos = puntos + puntuacion(bolasJuntas);
-                        }
-                        if (control == 1) {
-                            puntos = puntos + puntuacion(bolasJuntas) + puntuacionConcatenacion();
-                        }
-
+                        System.out.println("2.explotando");
                         try {
+                            control = 1;
                             Bola bolaComodin = ristraBolas.get(posicion - controlador);
                             ristraBolas.remove(posicion - controlador);
-                            System.out.println("Eliminando Bola Siguiente2");
-
-                            control = 1;
+                            System.out.println("2.Eliminando Elemento");
                             disparar(bolaComodin, posicion - controlador);
-                            System.out.println("puntuacion a sumar2: " + puntos + " puntos a sumar: ");
                         } catch (Exception ex) {
-
-                            System.out.println("Siguiente Posicion nula2");
+//                        System.out.println("puntos: "+puntos+" puntua: "+puntua);
+//                        if(puntua==0){this.puntuacion=this.puntuacion+puntos;
+//                        return ristraBolas;}
+//                        this.puntuacion=this.puntuacion+puntua;
+                            System.out.println("2.Siguiente Posicion nula");
                         }
-
                     }
-                }else if ((bolasJuntas >= 3)&&(acumulador-1>=0)&&(acumulador2-1!=0)) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
-                        explotar(posicion, acumulador, acumulador2);System.out.println("explotando4");
-                        try {
-                        Bola bolaComodin = ristraBolas.get(posicion - controlador);//Extrae la siguiente bola de la ristra despues de la eliminacion
-                        ristraBolas.remove(posicion - controlador);
-                        System.out.println("Eliminando Bola siguiente4");
-                        control = 1;
-                        disparar(bolaComodin, posicion - controlador);
-                        puntos = puntos + puntuacion(bolasJuntas) + puntuacionConcatenacion();
-                        System.out.println("puntuacion a sumar4: " + puntos + " puntos a sumar: ");
+                }
+            }
+        } else {
+            System.out.println("añadiendo de nuevo");
+            ristraBolas.add(posicion, bola);
 
-                    } catch (Exception ex) {
-                        System.out.println("Siguiente Posicion nula");
-                    }
+            if (longitud() > 0) {//comprueba si la ristra tiene elementos
+
+                acumulador = ayuda.contarBolasDetras(posicion, ristraBolas, acumulador, longitud);//cuenta las bolas que hay despues del disparo iguales a la bola disparada(cuenta la bola disparada)
+                acumulador2 = ayuda.contarBolasPorDelante(posicion, ristraBolas, acumulador2);//cuenta las bolas que hay antes del disparo iguales a la bola disparada(cuenta la bola disparada)
+                controlador = acumulador2 - 1;
+                System.out.println("bola añadidada de nuevo en posicion: " + (posicion+1) + " bolas por delante: " + controlador+" bolas por detras: "+(acumulador-1));
+                bolasJuntas = (acumulador + acumulador2 - 1);
+                System.out.println("3.Bolas a explotar: " + bolasJuntas);//restamos 1 para no contar dos veces la posicion del elemento introducido
+                System.out.println("izq: " + (acumulador - 1) + " der: " + (acumulador2 - 1));
+
+                if ((bolasJuntas >= 3) && (acumulador - 1 >= 0) && (acumulador2 - 1 != 0)) {//hace explotar el conjunto de bolas si al disparar hay 3 o mas bolas iguales juntas
+                    explotar(posicion, acumulador, acumulador2);
+                    System.out.println("3.explotando");
+                   
+                    Bola bolaComodin = ristraBolas.get(posicion - controlador);
+                    ristraBolas.remove(posicion - controlador);
+                    disparar(bolaComodin, posicion - controlador);
+
                 }
             }
         }
-        System.out.println("puntuacion a sumar total: " + puntos + " puntos a sumar: ");
+
         control = 0;
-        this.puntuacion = this.puntuacion + puntos;
         return ristraBolas;
     }
-
 }
